@@ -7,6 +7,16 @@ dotenv.config();
 connectDB();
 
 const app = express();
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://stirring-assignment-kc691k3v8-omvir-gyans-projects.vercel.app/" 
+    ],
+    credentials: true,
+  })
+);
+
 
 app.use(express.json());
 app.use(cors());
