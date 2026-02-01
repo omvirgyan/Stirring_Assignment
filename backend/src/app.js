@@ -8,9 +8,7 @@ connectDB();
 
 const app = express();
 
-/**
- * ✅ CORS — Express 5 compatible
- */
+
 app.use(
   cors({
     origin: [
@@ -25,16 +23,12 @@ app.use(
 
 app.use(express.json());
 
-/**
- * ✅ API ROUTES
- */
+
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/deals", require("./routes/deal.routes"));
 app.use("/api/claims", require("./routes/claim.routes"));
 
-/**
- * ✅ SAFE 404 HANDLER (NO `*`)
- */
+
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
