@@ -2,83 +2,83 @@
 
 ## Overview
 
-This project is a **Startup Benefits and Partnerships Platform** designed to help early-stage startups, founders, and indie hackers access premium SaaS tools at reduced or free cost.
+This project is a **Startup Benefits and Partnerships Platform** designed to help early-stage startups, founders, and indie hackers discover and claim exclusive SaaS and cloud service benefits.
 
-The platform allows users to:
-- Register and authenticate
-- Browse public and restricted startup deals
-- Claim eligible deals
-- Track claimed deals and their verification status in a dashboard
+The platform simulates a real-world startup ecosystem where:
+- Some deals are public
+- Some deals are locked and require verification
+- Claims go through an approval lifecycle
 
-Some deals are publicly accessible, while others are locked and require user verification, enforcing real-world access control scenarios.
+The focus of this project is **clean architecture, correct authorization, and production-ready structure** rather than superficial UI features.
+
+---
+
+## 🚀 Live Deployment
+
+The project is fully deployed and accessible online.
+
+### 🌐 Frontend (Vercel)
+🔗 https://stirring-assignment.vercel.app
+
+### ⚙️ Backend (Render)
+🔗 https://stirring-assignment-backend.onrender.com
+
+### 📡 Sample API Endpoint
+🔗 https://stirring-assignment-backend.onrender.com/api/deals
 
 ---
 
 ## End-to-End Application Flow
 
-1. **User Registration & Login**
-   - Users create an account and authenticate using email and password.
-   - JWT tokens are issued on successful login.
+1. **User Registration & Authentication**
+   - Users register and log in using email and password.
+   - A JWT token is generated on successful login.
 
 2. **Browse Deals**
-   - All users (authenticated or not) can browse available deals.
+   - All users can browse available deals.
    - Deals are clearly marked as **public** or **locked**.
 
 3. **Access Control**
    - Locked deals require the user to be verified.
-   - Unverified users are prevented from claiming restricted deals at the backend level.
+   - Authorization is enforced at the backend, not the UI.
 
 4. **Claim a Deal**
    - Eligible users can claim a deal.
-   - Each claim is stored with a status (`pending`, `approved`).
+   - Duplicate claims for the same deal are prevented.
 
 5. **User Dashboard**
    - Users can view their profile information.
-   - Claimed deals and their current status are displayed.
+   - All claimed deals are listed with their current status.
 
 ---
 
 ## Authentication & Authorization Strategy
 
 - Authentication is implemented using **JWT (JSON Web Tokens)**.
-- Tokens are generated during login and stored on the client side.
-- Protected backend routes use a centralized JWT middleware to:
-  - Validate tokens
-  - Extract the authenticated user ID
-- Authorization rules (such as restricting locked deals) are enforced **inside controllers**, not on the UI.
+- Tokens are stored on the client and attached to API requests.
+- A centralized authentication middleware:
+  - Validates JWTs
+  - Extracts the authenticated user ID
+- Authorization rules (such as restricting locked deals) are handled **inside controllers**, not on the frontend.
 
-**Key Principle:**  
-> Authorization is enforced at the business-logic level, not the frontend.
+**Design Principle:**
+> Authorization is enforced at the business-logic level, not the UI.
 
 ---
 
-## Internal Flow: Claiming a Deal
+## Claim Lifecycle Logic
 
 When a user attempts to claim a deal:
 
 1. The request passes through JWT authentication middleware.
-2. The backend fetches:
-   - The authenticated user
-   - The requested deal
+2. The backend fetches the user and deal.
 3. Validation rules are applied:
-   - If the deal is locked and the user is not verified → request is rejected.
-   - Duplicate claims for the same deal by the same user are prevented.
+   - Locked deal + unverified user → request rejected.
+   - Duplicate claim → request rejected.
 4. A new claim is created with status `pending`.
-5. The claim appears immediately in the user dashboard.
+5. The claim appears immediately in the dashboard.
 
 This design supports asynchronous partner verification workflows.
-
----
-
-## Frontend–Backend Interaction
-
-- Frontend is built using **Next.js (App Router)**.
-- Backend exposes REST APIs using **Express and MongoDB**.
-- A centralized API utility handles:
-  - Base backend URL
-  - JWT token attachment
-  - Error handling
-- The frontend controls presentation and UX states, while all critical access rules are validated by the backend.
 
 ---
 
@@ -106,43 +106,59 @@ This design supports asynchronous partner verification workflows.
 
 ---
 
-## UI & Animation Considerations
+## Frontend Architecture
 
-- The UI follows a **premium SaaS-style layout**.
-- Animations are implemented using **Framer Motion** and are used intentionally for:
+- Built using **Next.js (App Router)**.
+- Centralized API handler for:
+  - Backend base URL
+  - JWT token attachment
+  - Error handling
+- Protected routes prevent unauthorized access to sensitive pages.
+- UI state and animations are handled client-side, while all security logic remains on the backend.
+
+---
+
+## UI & Animation Strategy
+
+- Premium SaaS-style layout.
+- Animations implemented using **Framer Motion**.
+- Motion is used intentionally for:
   - Page transitions
-  - Button feedback
   - Hover states
-  - Loading states and skeletons
+  - Button feedback
+  - Loading and skeleton states
 
-Animations are designed to enhance clarity and usability rather than distract the user.
+Animations are designed to improve clarity and user experience without being excessive.
+
+---
+
+## Deployment Architecture
+
+- **Frontend:** Deployed on **Vercel**
+- **Backend:** Deployed on **Render**
+- **Database:** MongoDB Atlas
+- **CORS:** Explicitly configured for secure cross-origin communication
+- **Environment Variables:** Managed securely on hosting platforms
+
+This setup mirrors a real-world production deployment with proper separation of concerns.
 
 ---
 
 ## Known Limitations
 
-- User verification is simulated and not integrated with a real external verification service.
-- Partner approval of claims is not implemented (claims remain pending).
-- No role-based admin interface is included.
+- Startup verification is simulated.
+- No admin or partner dashboard is implemented.
+- Claims remain in `pending` state unless manually updated.
 
 ---
 
-## Improvements for Production Readiness
+## Possible Improvements
 
-- Add real startup verification workflows.
-- Introduce role-based access (admin/partner dashboards).
-- Implement pagination and caching for deals.
-- Improve observability with structured logging and monitoring.
-- Add automated tests for API endpoints.
-
----
-
-## Performance & Scalability Considerations
-
-- Stateless JWT authentication allows horizontal scaling.
-- Clean separation of concerns improves maintainability.
-- Centralized API logic avoids duplication on the frontend.
-- MongoDB schema design supports future indexing and optimization.
+- Real startup verification workflow.
+- Admin/partner approval interface.
+- Role-based access control.
+- Pagination and caching for large datasets.
+- Automated testing for API endpoints.
 
 ---
 
@@ -164,8 +180,8 @@ Animations are designed to enhance clarity and usability rather than distract th
 
 ## Final Notes
 
-This project focuses on **clarity of flow, correctness, and structure** rather than feature overload.  
-Every architectural and design decision was made with scalability, maintainability, and real-world product constraints in mind.
+This project emphasizes **correct flow, clean separation of concerns, and backend-driven authorization**.  
+All architectural decisions were made with scalability, maintainability, and real-world constraints in mind.
 
 ---
 
