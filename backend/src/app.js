@@ -6,16 +6,30 @@ const connectDB = require("./config/db");
 dotenv.config();
 connectDB();
 
-const app = express();
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://stirring-assignment.vercel.app",
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://stirring-assignment-kc691k3v8-omvir-gyans-projects.vercel.app/" 
-    ],
+    origin: function (origin, callback) {
+      // allow requests with no origin (Postman, server-to-server)
+      if (!origin) return callback(null, true);
+
+      if (
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") // ✅ allow preview URLs
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 
 
 app.use(express.json());
