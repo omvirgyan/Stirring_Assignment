@@ -8,39 +8,33 @@ connectDB();
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://stirring-assignment.vercel.app",
-];
-
+/**
+ * ✅ CORS — Express 5 compatible
+ */
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow Postman / server-side requests
-      if (!origin) return callback(null, true);
-
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.includes(".vercel.app")
-      ) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: [
+      "http://localhost:3000",
+      "https://stirring-assignment.vercel.app",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
   })
 );
 
 app.use(express.json());
 
-// routes
+/**
+ * ✅ API ROUTES
+ */
 app.use("/api/auth", require("./routes/auth.routes"));
 app.use("/api/deals", require("./routes/deal.routes"));
 app.use("/api/claims", require("./routes/claim.routes"));
 
+/**
+ * ✅ SAFE 404 HANDLER (NO `*`)
+ */
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
