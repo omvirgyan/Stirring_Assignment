@@ -16,10 +16,9 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow Postman / server-to-server
+      // allow Postman / server-side requests
       if (!origin) return callback(null, true);
 
-      // Allow localhost + Vercel prod + Vercel previews
       if (
         allowedOrigins.includes(origin) ||
         origin.includes(".vercel.app")
@@ -27,16 +26,13 @@ app.use(
         return callback(null, true);
       }
 
-      return callback(null, false);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// IMPORTANT: allow preflight
-app.options("*", cors());
 
 app.use(express.json());
 
